@@ -1,80 +1,199 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import {
+    Image,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from "react-native";
 
 export default function HomeScreen() {
     return (
-        <ScrollView style={styles.container}>
-            <ThemedView style={styles.header}>
+        <ThemedView style={styles.container}>
+            {/* Header */}
+            <View style={styles.header}>
                 <View style={styles.profileSection}>
                     <Image
                         source={require("@/assets/images/profile.jpeg")}
                         style={styles.profileImage}
                     />
                     <View>
-                        <ThemedText type="title">Hasibur Rahman</ThemedText>
+                        <ThemedText style={styles.name}>
+                            Hasibur Rahman
+                        </ThemedText>
                         <ThemedText style={styles.location}>
                             Mirpur 10, Dhaka
                         </ThemedText>
                     </View>
                 </View>
-            </ThemedView>
-
-            <View style={styles.grid}>
-                <ThemedView style={styles.card}>
-                    <Image
-                        source={require("@/assets/images/profile.jpeg")}
-                        style={styles.cardIcon}
+                <TouchableOpacity>
+                    <Ionicons
+                        name="notifications-outline"
+                        size={24}
+                        color="#fff"
                     />
-                    <ThemedText style={styles.cardTitle}>
-                        Donate Blood
-                    </ThemedText>
-                </ThemedView>
-
-                <ThemedView style={styles.card}>
-                    <Image
-                        source={require("@/assets/images/profile.jpeg")}
-                        style={styles.cardIcon}
-                    />
-                    <ThemedText style={styles.cardTitle}>
-                        Request Blood
-                    </ThemedText>
-                </ThemedView>
-
-                <ThemedView style={styles.card}>
-                    <Image
-                        source={require("@/assets/images/profile.jpeg")}
-                        style={styles.cardIcon}
-                    />
-                    <ThemedText style={styles.cardTitle}>Blood Bank</ThemedText>
-                </ThemedView>
-
-                <ThemedView style={styles.card}>
-                    <Image
-                        source={require("@/assets/images/profile.jpeg")}
-                        style={styles.cardIcon}
-                    />
-                    <ThemedText style={styles.cardTitle}>Hospital</ThemedText>
-                </ThemedView>
+                </TouchableOpacity>
             </View>
 
-            <ThemedView style={styles.campaignCard}>
-                <ThemedText type="subtitle">Blood Donate Campaign</ThemedText>
-                <Image
-                    source={require("@/assets/images/profile.jpeg")}
-                    style={styles.campaignImage}
-                />
-            </ThemedView>
-        </ScrollView>
+            {/* Stats Section */}
+            <View style={styles.statsContainer}>
+                <View style={styles.statItem}>
+                    <Image
+                        source={require("@/assets/images/profile.jpeg")}
+                        style={styles.statIcon}
+                    />
+                    <View>
+                        <ThemedText style={styles.statLabel}>
+                            Lifesaver
+                        </ThemedText>
+                        <ThemedText style={styles.statValue}>
+                            15 People
+                        </ThemedText>
+                    </View>
+                </View>
+                <View style={styles.statItem}>
+                    <Ionicons name="calendar-outline" size={24} color="#fff" />
+                    <View>
+                        <ThemedText style={styles.statValue}>
+                            19.12.2024
+                        </ThemedText>
+                        <ThemedText style={styles.statLabel}>
+                            54 Days Left
+                        </ThemedText>
+                    </View>
+                </View>
+                <View style={styles.bloodType}>
+                    <ThemedText style={styles.bloodTypeText}>A+</ThemedText>
+                </View>
+            </View>
+
+            <ScrollView style={styles.content}>
+                {/* Campaign Section */}
+                <View style={styles.section}>
+                    <ThemedText style={styles.sectionTitle}>
+                        Blood Donate Campaign
+                    </ThemedText>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                    >
+                        <TouchableOpacity
+                            style={[
+                                styles.campaignCard,
+                                { backgroundColor: "#8B1818" },
+                            ]}
+                        >
+                            <ThemedText style={styles.campaignTitle}>
+                                Annual
+                            </ThemedText>
+                            <ThemedText style={styles.campaignSubtitle}>
+                                Blood Drive 2024
+                            </ThemedText>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[
+                                styles.campaignCard,
+                                { backgroundColor: "#7E3AF2" },
+                            ]}
+                        >
+                            <ThemedText style={styles.campaignTitle}>
+                                City Hall
+                            </ThemedText>
+                            <ThemedText style={styles.campaignSubtitle}>
+                                Blood Donation
+                            </ThemedText>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[
+                                styles.campaignCard,
+                                { backgroundColor: "#C2940A" },
+                            ]}
+                        >
+                            <ThemedText style={styles.campaignTitle}>
+                                National
+                            </ThemedText>
+                            <ThemedText style={styles.campaignSubtitle}>
+                                Blood Donation Week
+                            </ThemedText>
+                        </TouchableOpacity>
+                    </ScrollView>
+                </View>
+
+                {/* Quick Actions Grid */}
+                <View style={styles.grid}>
+                    <TouchableOpacity style={styles.gridItem}>
+                        <Image
+                            source={require("@/assets/images/profile.jpeg")}
+                            style={styles.gridIcon}
+                        />
+                        <ThemedText style={styles.gridLabel}>
+                            Donate Blood
+                        </ThemedText>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.gridItem}>
+                        <Image
+                            source={require("@/assets/images/profile.jpeg")}
+                            style={styles.gridIcon}
+                        />
+                        <ThemedText style={styles.gridLabel}>
+                            Request Blood
+                        </ThemedText>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.gridItem}>
+                        <Image
+                            source={require("@/assets/images/profile.jpeg")}
+                            style={styles.gridIcon}
+                        />
+                        <ThemedText style={styles.gridLabel}>
+                            Blood Bank
+                        </ThemedText>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.gridItem}>
+                        <Image
+                            source={require("@/assets/images/profile.jpeg")}
+                            style={styles.gridIcon}
+                        />
+                        <ThemedText style={styles.gridLabel}>
+                            Hospital
+                        </ThemedText>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.gridItem}>
+                        <Image
+                            source={require("@/assets/images/profile.jpeg")}
+                            style={styles.gridIcon}
+                        />
+                        <ThemedText style={styles.gridLabel}>Inbox</ThemedText>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.gridItem}>
+                        <Image
+                            source={require("@/assets/images/profile.jpeg")}
+                            style={styles.gridIcon}
+                        />
+                        <ThemedText style={styles.gridLabel}>
+                            Emergency Numbers
+                        </ThemedText>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+        </ThemedView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#fff",
     },
     header: {
+        backgroundColor: "#E11D48",
         padding: 20,
+        paddingTop: Platform.OS === "ios" ? 60 : 20,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
     profileSection: {
         flexDirection: "row",
@@ -82,44 +201,107 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     profileImage: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+    },
+    name: {
+        color: "#fff",
+        fontSize: 18,
+        fontWeight: "600",
     },
     location: {
-        color: "#666",
+        color: "#fff",
+        fontSize: 14,
+    },
+    statsContainer: {
+        backgroundColor: "#E11D48",
+        padding: 20,
+        paddingTop: 0,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
+    statItem: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+    },
+    statIcon: {
+        width: 24,
+        height: 24,
+    },
+    statLabel: {
+        color: "#fff",
+        fontSize: 12,
+    },
+    statValue: {
+        color: "#fff",
+        fontSize: 14,
+        fontWeight: "600",
+    },
+    bloodType: {
+        backgroundColor: "#fff",
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    bloodTypeText: {
+        color: "#E11D48",
+        fontSize: 16,
+        fontWeight: "bold",
+    },
+    content: {
+        flex: 1,
+        padding: 20,
+    },
+    section: {
+        marginBottom: 20,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: "600",
+        marginBottom: 12,
+    },
+    campaignCard: {
+        width: 150,
+        height: 100,
+        borderRadius: 12,
+        padding: 15,
+        marginRight: 12,
+        justifyContent: "flex-end",
+    },
+    campaignTitle: {
+        color: "#fff",
+        fontSize: 16,
+        fontWeight: "600",
+    },
+    campaignSubtitle: {
+        color: "#fff",
+        fontSize: 12,
     },
     grid: {
         flexDirection: "row",
         flexWrap: "wrap",
-        padding: 10,
-        gap: 10,
+        justifyContent: "space-between",
+        gap: 16,
     },
-    card: {
+    gridItem: {
         width: "47%",
-        padding: 20,
+        backgroundColor: "#F5F5F5",
         borderRadius: 12,
+        padding: 16,
         alignItems: "center",
-        justifyContent: "center",
-        gap: 10,
+        gap: 8,
     },
-    cardIcon: {
-        width: 40,
-        height: 40,
+    gridIcon: {
+        width: 32,
+        height: 32,
     },
-    cardTitle: {
-        fontSize: 16,
-        fontWeight: "500",
-    },
-    campaignCard: {
-        margin: 20,
-        padding: 20,
-        borderRadius: 12,
-    },
-    campaignImage: {
-        width: "100%",
-        height: 150,
-        borderRadius: 8,
-        marginTop: 10,
+    gridLabel: {
+        fontSize: 14,
+        textAlign: "center",
     },
 });
