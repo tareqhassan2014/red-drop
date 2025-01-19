@@ -1,3 +1,4 @@
+import { NotificationBell } from "@/components/NotificationBell";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Ionicons } from "@expo/vector-icons";
@@ -29,13 +30,9 @@ export default function HomeScreen() {
                         </ThemedText>
                     </View>
                 </View>
-                <TouchableOpacity>
-                    <Ionicons
-                        name="notifications-outline"
-                        size={24}
-                        color="#fff"
-                    />
-                </TouchableOpacity>
+                <View style={styles.headerRight}>
+                    <NotificationBell color="#fff" />
+                </View>
             </View>
 
             {/* Stats Section */}
@@ -303,5 +300,10 @@ const styles = StyleSheet.create({
     gridLabel: {
         fontSize: 14,
         textAlign: "center",
+    },
+    headerRight: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
     },
 });
