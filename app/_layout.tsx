@@ -27,6 +27,13 @@ export default function RootLayout() {
                             headerShown: false,
                         }}
                     />
+                    <Stack.Screen
+                        name="settings/edit-profile"
+                        options={{
+                            presentation: "modal",
+                            headerShown: false,
+                        }}
+                    />
                 </Stack>
             </PaperProvider>
         </Provider>

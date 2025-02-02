@@ -206,7 +206,7 @@ export default function ProfileScreen() {
                             <List.Icon {...props} icon="chevron-right" />
                         )}
                         onPress={() => {
-                            /* TODO: Navigate to edit profile */
+                            router.push("/settings/edit-profile");
                         }}
                     />
                     <Divider />
