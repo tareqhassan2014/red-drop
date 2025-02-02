@@ -1,167 +1,128 @@
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
-import {
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { Button, Checkbox, Text, TextInput } from "react-native-paper";
+
+const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
 export default function DonateScreen() {
-    const router = useRouter();
+    const [name, setName] = useState("");
+    const [bloodType, setBloodType] = useState("");
+    const [healthStatus, setHealthStatus] = useState("");
+    const [lastDonation, setLastDonation] = useState("");
+    const [availability, setAvailability] = useState("");
+    const [weight, setWeight] = useState("");
+    const [age, setAge] = useState("");
     const [consent, setConsent] = useState(false);
 
     return (
-        <ThemedView style={styles.container}>
-            {/* Header */}
+        <ScrollView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    style={styles.backButton}
-                >
-                    <Ionicons name="chevron-back" size={24} color="#000" />
-                    <ThemedText style={styles.headerTitle}>
+                <View style={styles.headerLeft}>
+                    <MaterialCommunityIcons
+                        name="arrow-left"
+                        size={24}
+                        color="#000"
+                    />
+                    <Text variant="headlineMedium" style={styles.title}>
                         Donate Blood
-                    </ThemedText>
-                </TouchableOpacity>
-                <View style={styles.headerRight}>
-                    <TouchableOpacity style={styles.notificationButton}>
-                        <Ionicons
-                            name="notifications-outline"
-                            size={24}
-                            color="#000"
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                        <Ionicons
-                            name="ellipsis-vertical"
-                            size={24}
-                            color="#000"
-                        />
-                    </TouchableOpacity>
+                    </Text>
                 </View>
+                <MaterialCommunityIcons name="bell" size={24} color="#000" />
             </View>
 
-            <ScrollView style={styles.form}>
-                {/* Full Name */}
-                <View style={styles.inputGroup}>
-                    <ThemedText style={styles.label}>
-                        Write Your Full Name
-                    </ThemedText>
-                    <TextInput
-                        placeholder="Your name here"
-                        style={styles.input}
-                        placeholderTextColor="#666"
-                    />
-                </View>
+            <View style={styles.form}>
+                <TextInput
+                    label="Full Name"
+                    value={name}
+                    onChangeText={setName}
+                    mode="outlined"
+                    placeholder="Your name here"
+                    style={styles.input}
+                />
 
-                {/* Blood Type */}
-                <View style={styles.inputGroup}>
-                    <ThemedText style={styles.label}>Blood Type</ThemedText>
-                    <TouchableOpacity style={styles.input}>
-                        <ThemedText style={styles.selectText}>
-                            Select Your Blood Type
-                        </ThemedText>
-                        <Ionicons name="chevron-down" size={20} color="#666" />
-                    </TouchableOpacity>
-                </View>
+                <TextInput
+                    label="Blood Type"
+                    value={bloodType}
+                    onChangeText={setBloodType}
+                    mode="outlined"
+                    placeholder="Select Your Blood Type"
+                    right={<TextInput.Icon icon="chevron-down" />}
+                    style={styles.input}
+                />
 
-                {/* Health Status */}
-                <View style={styles.inputGroup}>
-                    <ThemedText style={styles.label}>Health Status</ThemedText>
-                    <TextInput
-                        placeholder="Recent surgery, allergy, vaccine or taking medicine"
-                        style={styles.input}
-                        placeholderTextColor="#666"
-                    />
-                </View>
+                <TextInput
+                    label="Health Status"
+                    value={healthStatus}
+                    onChangeText={setHealthStatus}
+                    mode="outlined"
+                    placeholder="Recent surgery, allergy, vaccine or taking medicine"
+                    multiline
+                    numberOfLines={3}
+                    style={styles.input}
+                />
 
-                {/* Last Donation Date */}
-                <View style={styles.inputGroup}>
-                    <ThemedText style={styles.label}>
-                        Last Donation Date
-                    </ThemedText>
-                    <TouchableOpacity style={styles.input}>
-                        <ThemedText style={styles.selectText}>
-                            Select Date
-                        </ThemedText>
-                        <Ionicons name="chevron-down" size={20} color="#666" />
-                    </TouchableOpacity>
-                </View>
+                <TextInput
+                    label="Last Donation Date"
+                    value={lastDonation}
+                    onChangeText={setLastDonation}
+                    mode="outlined"
+                    placeholder="Select Date"
+                    right={<TextInput.Icon icon="calendar" />}
+                    style={styles.input}
+                />
 
-                {/* Availability */}
-                <View style={styles.inputGroup}>
-                    <ThemedText style={styles.label}>Availability</ThemedText>
-                    <TextInput
-                        placeholder="e.g., Dhaka city, till January 2025"
-                        style={styles.input}
-                        placeholderTextColor="#666"
-                    />
-                </View>
+                <TextInput
+                    label="Availability"
+                    value={availability}
+                    onChangeText={setAvailability}
+                    mode="outlined"
+                    placeholder="e.g., Dhaka city, till January 2025"
+                    style={styles.input}
+                />
 
-                {/* Weight and Age */}
-                <View style={styles.row}>
-                    <View style={[styles.inputGroup, styles.halfWidth]}>
-                        <ThemedText style={styles.label}>Weight</ThemedText>
-                        <TouchableOpacity style={styles.input}>
-                            <ThemedText style={styles.selectText}>
-                                Select Your Weight
-                            </ThemedText>
-                            <Ionicons
-                                name="chevron-down"
-                                size={20}
-                                color="#666"
-                            />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={[styles.inputGroup, styles.halfWidth]}>
-                        <ThemedText style={styles.label}>Age</ThemedText>
-                        <TouchableOpacity style={styles.input}>
-                            <ThemedText style={styles.selectText}>
-                                Select Your Age
-                            </ThemedText>
-                            <Ionicons
-                                name="chevron-down"
-                                size={20}
-                                color="#666"
-                            />
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                <TextInput
+                    label="Weight"
+                    value={weight}
+                    onChangeText={setWeight}
+                    mode="outlined"
+                    placeholder="Select Your Weight"
+                    right={<TextInput.Icon icon="chevron-down" />}
+                    style={styles.input}
+                />
 
-                {/* Consent */}
+                <TextInput
+                    label="Age"
+                    value={age}
+                    onChangeText={setAge}
+                    mode="outlined"
+                    placeholder="Select Your Age"
+                    right={<TextInput.Icon icon="chevron-down" />}
+                    style={styles.input}
+                />
+
                 <View style={styles.consentContainer}>
-                    <TouchableOpacity
-                        style={styles.checkbox}
+                    <Checkbox.Android
+                        status={consent ? "checked" : "unchecked"}
                         onPress={() => setConsent(!consent)}
-                    >
-                        {consent && (
-                            <Ionicons
-                                name="checkmark"
-                                size={16}
-                                color="#E11D48"
-                            />
-                        )}
-                    </TouchableOpacity>
-                    <ThemedText style={styles.consentText}>
+                    />
+                    <Text variant="bodySmall" style={styles.consentText}>
                         I voluntarily consent to donate blood and agree to any
                         necessary medical checks before donation.
-                    </ThemedText>
+                    </Text>
                 </View>
 
-                {/* Submit Button */}
-                <TouchableOpacity style={styles.button}>
-                    <ThemedText style={styles.buttonText}>
-                        Proceed to Donate
-                    </ThemedText>
-                </TouchableOpacity>
-            </ScrollView>
-        </ThemedView>
+                <Button
+                    mode="contained"
+                    onPress={() => {
+                        /* TODO: Implement donation submission */
+                    }}
+                    style={styles.submitButton}
+                >
+                    Proceed to Donate
+                </Button>
+            </View>
+        </ScrollView>
     );
 }
 
@@ -174,91 +135,33 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingHorizontal: 16,
-        paddingTop: Platform.OS === "ios" ? 60 : 20,
-        paddingBottom: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "#eee",
+        padding: 20,
+        paddingTop: 60,
     },
-    backButton: {
+    headerLeft: {
         flexDirection: "row",
         alignItems: "center",
     },
-    headerTitle: {
-        fontSize: 18,
-        fontWeight: "600",
-        marginLeft: 8,
-    },
-    headerRight: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 15,
+    title: {
+        fontWeight: "bold",
+        marginLeft: 12,
     },
     form: {
-        padding: 16,
-    },
-    inputGroup: {
-        marginBottom: 16,
-    },
-    label: {
-        fontSize: 16,
-        marginBottom: 8,
-        color: "#333",
+        padding: 20,
     },
     input: {
-        borderWidth: 1,
-        borderColor: "#ddd",
-        borderRadius: 8,
-        padding: 12,
-        fontSize: 16,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    row: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        gap: 10,
-    },
-    halfWidth: {
-        flex: 1,
-    },
-    selectText: {
-        color: "#666",
+        marginBottom: 16,
     },
     consentContainer: {
         flexDirection: "row",
-        alignItems: "flex-start",
-        marginVertical: 20,
-        gap: 10,
-    },
-    checkbox: {
-        width: 20,
-        height: 20,
-        borderWidth: 1,
-        borderColor: "#E11D48",
-        borderRadius: 4,
-        justifyContent: "center",
         alignItems: "center",
+        marginBottom: 24,
     },
     consentText: {
         flex: 1,
-        fontSize: 14,
-        color: "#666",
+        marginLeft: 8,
     },
-    button: {
-        backgroundColor: "#E11D48",
-        padding: 16,
-        borderRadius: 8,
-        alignItems: "center",
-        marginBottom: 30,
-    },
-    buttonText: {
-        color: "white",
-        fontSize: 16,
-        fontWeight: "600",
-    },
-    notificationButton: {
-        padding: 4,
+    submitButton: {
+        paddingVertical: 6,
     },
 });

@@ -1,52 +1,38 @@
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { Platform, StyleSheet } from "react-native";
-
-import { HapticTab } from "@/components/HapticTab";
-import TabBarBackground from "@/components/ui/TabBarBackground";
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
+import { View } from "react-native";
+import { useTheme } from "react-native-paper";
 
 export default function TabLayout() {
-    const colorScheme = useColorScheme();
+    const theme = useTheme();
 
     return (
         <Tabs
             screenOptions={{
-                tabBarActiveTintColor: "#E11D48",
                 headerShown: false,
-                tabBarButton: HapticTab,
-                tabBarBackground: TabBarBackground,
                 tabBarStyle: {
-                    ...Platform.select({
-                        ios: {
-                            backgroundColor: "white",
-                            borderTopWidth: 0,
-                            elevation: 0,
-                            height: 90,
-                            paddingBottom: 20,
-                            paddingTop: 10,
-                        },
-                        android: {
-                            backgroundColor:
-                                Colors[colorScheme ?? "light"].background,
-                            borderTopWidth: 0,
-                            elevation: 0,
-                            height: 90,
-                            paddingBottom: 20,
-                            paddingTop: 10,
-                        },
-                    }),
+                    height: 60,
+                    backgroundColor: "#fff",
+                    borderTopWidth: 1,
+                    borderTopColor: "#f0f0f0",
+                    paddingBottom: 8,
                 },
+                tabBarActiveTintColor: theme.colors.primary,
+                tabBarInactiveTintColor: "#757575",
+                tabBarLabelStyle: {
+                    fontSize: 12,
+                    fontWeight: "500",
+                },
+                tabBarShowLabel: true,
             }}
         >
             <Tabs.Screen
-                name="index"
+                name="donor"
                 options={{
                     title: "Donor",
-                    tabBarIcon: ({ color, focused }) => (
-                        <Ionicons
-                            name={focused ? "water" : "water-outline"}
+                    tabBarIcon: ({ color }) => (
+                        <MaterialCommunityIcons
+                            name="water-outline"
                             size={24}
                             color={color}
                         />
@@ -57,9 +43,9 @@ export default function TabLayout() {
                 name="events"
                 options={{
                     title: "Events",
-                    tabBarIcon: ({ color, focused }) => (
-                        <Ionicons
-                            name={focused ? "calendar" : "calendar-outline"}
+                    tabBarIcon: ({ color }) => (
+                        <MaterialCommunityIcons
+                            name="calendar-outline"
                             size={24}
                             color={color}
                         />
@@ -69,14 +55,33 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="home"
                 options={{
-                    title: "",
-                    tabBarIcon: ({ focused }) => (
-                        <Ionicons
-                            name={focused ? "home" : "home-outline"}
-                            size={28}
-                            color="white"
-                            style={styles.centerIcon}
-                        />
+                    title: "Home",
+                    tabBarIcon: ({ color }) => (
+                        <View
+                            style={{
+                                backgroundColor: theme.colors.primary,
+                                width: 50,
+                                height: 50,
+                                borderRadius: 25,
+                                justifyContent: "center",
+                                alignItems: "center",
+                                marginBottom: 20,
+                                shadowColor: "#000",
+                                shadowOffset: {
+                                    width: 0,
+                                    height: 2,
+                                },
+                                shadowOpacity: 0.25,
+                                shadowRadius: 3.84,
+                                elevation: 5,
+                            }}
+                        >
+                            <MaterialCommunityIcons
+                                name="home"
+                                size={24}
+                                color="#fff"
+                            />
+                        </View>
                     ),
                 }}
             />
@@ -84,9 +89,9 @@ export default function TabLayout() {
                 name="donate"
                 options={{
                     title: "Donate",
-                    tabBarIcon: ({ color, focused }) => (
-                        <Ionicons
-                            name={focused ? "heart" : "heart-outline"}
+                    tabBarIcon: ({ color }) => (
+                        <MaterialCommunityIcons
+                            name="hand-heart-outline"
                             size={24}
                             color={color}
                         />
@@ -97,9 +102,9 @@ export default function TabLayout() {
                 name="profile"
                 options={{
                     title: "Profile",
-                    tabBarIcon: ({ color, focused }) => (
-                        <Ionicons
-                            name={focused ? "person" : "person-outline"}
+                    tabBarIcon: ({ color }) => (
+                        <MaterialCommunityIcons
+                            name="account-outline"
                             size={24}
                             color={color}
                         />
@@ -109,20 +114,3 @@ export default function TabLayout() {
         </Tabs>
     );
 }
-
-const styles = StyleSheet.create({
-    centerIcon: {
-        backgroundColor: "#E11D48",
-        borderRadius: 30,
-        padding: 15,
-        marginBottom: 30,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
-    },
-});

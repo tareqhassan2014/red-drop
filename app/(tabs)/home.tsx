@@ -1,181 +1,114 @@
-import { NotificationBell } from "@/components/NotificationBell";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { Ionicons } from "@expo/vector-icons";
-import {
-    Image,
-    Platform,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { ScrollView, StyleSheet, View } from "react-native";
+import { Avatar, Button, Card, Text } from "react-native-paper";
+
+const menuItems = [
+    { icon: "water", label: "Donate Blood" },
+    { icon: "clipboard-text", label: "Request Blood" },
+    { icon: "hospital-building", label: "Blood Bank" },
+    { icon: "hospital-marker", label: "Hospital" },
+    { icon: "inbox", label: "Inbox" },
+    { icon: "phone", label: "Emergency Numbers" },
+];
 
 export default function HomeScreen() {
     return (
-        <ThemedView style={styles.container}>
-            {/* Header */}
+        <ScrollView style={styles.container}>
+            {/* Header Section */}
             <View style={styles.header}>
-                <View style={styles.profileSection}>
-                    <Image
-                        source={require("@/assets/images/profile.jpeg")}
-                        style={styles.profileImage}
-                    />
-                    <View>
-                        <ThemedText style={styles.name}>
-                            Hasibur Rahman
-                        </ThemedText>
-                        <ThemedText style={styles.location}>
-                            Mirpur 10, Dhaka
-                        </ThemedText>
+                <View style={styles.userSection}>
+                    <View style={styles.userInfo}>
+                        <Avatar.Image
+                            size={50}
+                            source={{ uri: "https://placeholder.com/150" }}
+                        />
+                        <View style={styles.userDetails}>
+                            <Text variant="titleMedium">Hasibur Rahman</Text>
+                            <View style={styles.locationRow}>
+                                <MaterialCommunityIcons
+                                    name="map-marker"
+                                    size={16}
+                                    color="#666"
+                                />
+                                <Text variant="bodySmall">Mirpur 10, Dhaka</Text>
+                            </View>
+                        </View>
                     </View>
+                    <MaterialCommunityIcons name="bell" size={24} color="#000" />
                 </View>
-                <View style={styles.headerRight}>
-                    <NotificationBell color="#fff" />
+
+                <View style={styles.achievementSection}>
+                    <View style={styles.achievementBadge}>
+                        <MaterialCommunityIcons
+                            name="heart"
+                            size={20}
+                            color="#E53935"
+                        />
+                        <Text variant="bodySmall">Lifesaver - 15 People</Text>
+                    </View>
+                    <View style={styles.bloodInfo}>
+                        <Text variant="bodySmall">
+                            Next donation: 19.12.2024 - 54 Days Left
+                        </Text>
+                        <View style={styles.bloodType}>
+                            <Text style={styles.bloodTypeText}>A+</Text>
+                        </View>
+                    </View>
                 </View>
             </View>
 
-            {/* Stats Section */}
-            <View style={styles.statsContainer}>
-                <View style={styles.statItem}>
-                    <Image
-                        source={require("@/assets/images/profile.jpeg")}
-                        style={styles.statIcon}
-                    />
-                    <View>
-                        <ThemedText style={styles.statLabel}>
-                            Lifesaver
-                        </ThemedText>
-                        <ThemedText style={styles.statValue}>
-                            15 People
-                        </ThemedText>
-                    </View>
-                </View>
-                <View style={styles.statItem}>
-                    <Ionicons name="calendar-outline" size={24} color="#fff" />
-                    <View>
-                        <ThemedText style={styles.statValue}>
-                            19.12.2024
-                        </ThemedText>
-                        <ThemedText style={styles.statLabel}>
-                            54 Days Left
-                        </ThemedText>
-                    </View>
-                </View>
-                <View style={styles.bloodType}>
-                    <ThemedText style={styles.bloodTypeText}>A+</ThemedText>
-                </View>
+            {/* Campaign Carousel */}
+            <View style={styles.campaignSection}>
+                <Text variant="titleMedium" style={styles.sectionTitle}>
+                    Blood Donation Campaigns
+                </Text>
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={styles.campaignScroll}
+                >
+                    <Card style={styles.campaignCard}>
+                        <Card.Cover
+                            source={{ uri: "https://placeholder.com/300x200" }}
+                        />
+                        <Card.Content>
+                            <Text variant="titleMedium">
+                                Annual Blood Drive 2024
+                            </Text>
+                            <Text variant="bodySmall">10th - 15th October</Text>
+                        </Card.Content>
+                    </Card>
+                    <Card style={styles.campaignCard}>
+                        <Card.Cover
+                            source={{ uri: "https://placeholder.com/300x200" }}
+                        />
+                        <Card.Content>
+                            <Text variant="titleMedium">
+                                City Hall Blood Donation
+                            </Text>
+                            <Text variant="bodySmall">20th October</Text>
+                        </Card.Content>
+                    </Card>
+                </ScrollView>
             </View>
 
-            <ScrollView style={styles.content}>
-                {/* Campaign Section */}
-                <View style={styles.section}>
-                    <ThemedText style={styles.sectionTitle}>
-                        Blood Donate Campaign
-                    </ThemedText>
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                    >
-                        <TouchableOpacity
-                            style={[
-                                styles.campaignCard,
-                                { backgroundColor: "#8B1818" },
-                            ]}
+            {/* Main Menu Grid */}
+            <View style={styles.menuGrid}>
+                {menuItems.map((item, index) => (
+                    <View key={index} style={styles.menuItem}>
+                        <Button
+                            mode="contained-tonal"
+                            icon={item.icon}
+                            contentStyle={styles.menuButton}
+                            labelStyle={styles.menuLabel}
+                            onPress={() => {}}
                         >
-                            <ThemedText style={styles.campaignTitle}>
-                                Annual
-                            </ThemedText>
-                            <ThemedText style={styles.campaignSubtitle}>
-                                Blood Drive 2024
-                            </ThemedText>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[
-                                styles.campaignCard,
-                                { backgroundColor: "#7E3AF2" },
-                            ]}
-                        >
-                            <ThemedText style={styles.campaignTitle}>
-                                City Hall
-                            </ThemedText>
-                            <ThemedText style={styles.campaignSubtitle}>
-                                Blood Donation
-                            </ThemedText>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[
-                                styles.campaignCard,
-                                { backgroundColor: "#C2940A" },
-                            ]}
-                        >
-                            <ThemedText style={styles.campaignTitle}>
-                                National
-                            </ThemedText>
-                            <ThemedText style={styles.campaignSubtitle}>
-                                Blood Donation Week
-                            </ThemedText>
-                        </TouchableOpacity>
-                    </ScrollView>
-                </View>
-
-                {/* Quick Actions Grid */}
-                <View style={styles.grid}>
-                    <TouchableOpacity style={styles.gridItem}>
-                        <Image
-                            source={require("@/assets/images/profile.jpeg")}
-                            style={styles.gridIcon}
-                        />
-                        <ThemedText style={styles.gridLabel}>
-                            Donate Blood
-                        </ThemedText>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.gridItem}>
-                        <Image
-                            source={require("@/assets/images/profile.jpeg")}
-                            style={styles.gridIcon}
-                        />
-                        <ThemedText style={styles.gridLabel}>
-                            Request Blood
-                        </ThemedText>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.gridItem}>
-                        <Image
-                            source={require("@/assets/images/profile.jpeg")}
-                            style={styles.gridIcon}
-                        />
-                        <ThemedText style={styles.gridLabel}>
-                            Blood Bank
-                        </ThemedText>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.gridItem}>
-                        <Image
-                            source={require("@/assets/images/profile.jpeg")}
-                            style={styles.gridIcon}
-                        />
-                        <ThemedText style={styles.gridLabel}>
-                            Hospital
-                        </ThemedText>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.gridItem}>
-                        <Image
-                            source={require("@/assets/images/profile.jpeg")}
-                            style={styles.gridIcon}
-                        />
-                        <ThemedText style={styles.gridLabel}>Inbox</ThemedText>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.gridItem}>
-                        <Image
-                            source={require("@/assets/images/profile.jpeg")}
-                            style={styles.gridIcon}
-                        />
-                        <ThemedText style={styles.gridLabel}>
-                            Emergency Numbers
-                        </ThemedText>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
-        </ThemedView>
+                            {item.label}
+                        </Button>
+                    </View>
+                ))}
+            </View>
+        </ScrollView>
     );
 }
 
@@ -185,125 +118,85 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
     },
     header: {
-        backgroundColor: "#E11D48",
         padding: 20,
-        paddingTop: Platform.OS === "ios" ? 60 : 20,
+        paddingTop: 60,
+        backgroundColor: "#fff",
+        borderBottomWidth: 1,
+        borderBottomColor: "#f0f0f0",
+    },
+    userSection: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
     },
-    profileSection: {
+    userInfo: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 12,
     },
-    profileImage: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+    userDetails: {
+        marginLeft: 12,
     },
-    name: {
-        color: "#fff",
-        fontSize: 18,
-        fontWeight: "600",
-    },
-    location: {
-        color: "#fff",
-        fontSize: 14,
-    },
-    statsContainer: {
-        backgroundColor: "#E11D48",
-        padding: 20,
-        paddingTop: 0,
+    locationRow: {
         flexDirection: "row",
-        justifyContent: "space-between",
         alignItems: "center",
+        marginTop: 4,
     },
-    statItem: {
+    achievementSection: {
+        marginTop: 20,
+    },
+    achievementBadge: {
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
+        marginBottom: 8,
     },
-    statIcon: {
-        width: 24,
-        height: 24,
-    },
-    statLabel: {
-        color: "#fff",
-        fontSize: 12,
-    },
-    statValue: {
-        color: "#fff",
-        fontSize: 14,
-        fontWeight: "600",
+    bloodInfo: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
     },
     bloodType: {
-        backgroundColor: "#fff",
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        justifyContent: "center",
-        alignItems: "center",
+        backgroundColor: "#E53935",
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        borderRadius: 16,
     },
     bloodTypeText: {
-        color: "#E11D48",
-        fontSize: 16,
+        color: "#fff",
         fontWeight: "bold",
     },
-    content: {
-        flex: 1,
+    campaignSection: {
         padding: 20,
     },
-    section: {
-        marginBottom: 20,
-    },
     sectionTitle: {
-        fontSize: 18,
-        fontWeight: "600",
-        marginBottom: 12,
+        marginBottom: 16,
+        fontWeight: "bold",
+    },
+    campaignScroll: {
+        marginLeft: -20,
+        paddingLeft: 20,
     },
     campaignCard: {
-        width: 150,
-        height: 100,
-        borderRadius: 12,
-        padding: 15,
-        marginRight: 12,
-        justifyContent: "flex-end",
+        width: 280,
+        marginRight: 16,
     },
-    campaignTitle: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "600",
-    },
-    campaignSubtitle: {
-        color: "#fff",
-        fontSize: 12,
-    },
-    grid: {
+    menuGrid: {
         flexDirection: "row",
         flexWrap: "wrap",
-        justifyContent: "space-between",
-        gap: 16,
+        padding: 10,
+        gap: 10,
     },
-    gridItem: {
-        width: "47%",
-        backgroundColor: "#F5F5F5",
-        borderRadius: 12,
-        padding: 16,
-        alignItems: "center",
-        gap: 8,
+    menuItem: {
+        width: "30%",
+        aspectRatio: 1,
     },
-    gridIcon: {
-        width: 32,
-        height: 32,
+    menuButton: {
+        height: "100%",
+        flexDirection: "column",
     },
-    gridLabel: {
-        fontSize: 14,
+    menuLabel: {
+        fontSize: 12,
+        marginTop: 8,
         textAlign: "center",
-    },
-    headerRight: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
     },
 });
