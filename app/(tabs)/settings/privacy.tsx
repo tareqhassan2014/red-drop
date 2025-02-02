@@ -1,8 +1,8 @@
+import HeaderWithNotification from "@/components/HeaderWithNotification";
 import { useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
 import { Button, Card, Divider, List, Switch, Text } from "react-native-paper";
-import HeaderWithNotification from "../../components/HeaderWithNotification";
 
 interface PrivacySettings {
     showProfile: boolean;

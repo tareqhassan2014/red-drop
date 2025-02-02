@@ -1,5 +1,8 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet, View } from "react-native";
 import {
     Avatar,
@@ -8,54 +11,72 @@ import {
     HelperText,
     TextInput,
 } from "react-native-paper";
-import HeaderWithNotification from "../../components/HeaderWithNotification";
+import * as yup from "yup";
+
+import HeaderWithNotification from "@/components/HeaderWithNotification";
 import { updateProfile } from "../../src/features/data/dataSlice";
 import { useAppDispatch, useAppSelector } from "../../src/store/hooks";
+
+const schema = yup.object({
+    name: yup.string().required("Name is required"),
+    email: yup
+        .string()
+        .email("Please enter a valid email")
+        .required("Email is required"),
+    phone: yup.string().required("Phone number is required"),
+    location: yup.string().required("Location is required"),
+    avatar: yup.string(),
+});
+
+type FormData = yup.InferType<typeof schema>;
 
 export default function EditProfileScreen() {
     const router = useRouter();
     const dispatch = useAppDispatch();
     const profile = useAppSelector((state) => state.data.profile);
 
-    const [formData, setFormData] = useState({
-        name: profile.name,
-        email: profile.email,
-        phone: profile.phone,
-        location: profile.location,
+    const {
+        control,
+        handleSubmit,
+        setValue,
+        formState: { errors },
+    } = useForm<FormData>({
+        resolver: yupResolver(schema),
+        defaultValues: {
+            name: profile.name,
+            email: profile.email,
+            phone: profile.phone,
+            location: profile.location,
+            avatar: profile.avatar,
+        },
     });
 
-    const [errors, setErrors] = useState<{ [key: string]: string }>({});
+    const handleChangePhoto = async () => {
+        const { status } =
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-    const validateForm = () => {
-        const newErrors: { [key: string]: string } = {};
-
-        if (!formData.name.trim()) {
-            newErrors.name = "Name is required";
+        if (status !== "granted") {
+            alert(
+                "Sorry, we need camera roll permissions to change your photo!"
+            );
+            return;
         }
 
-        if (!formData.email.trim()) {
-            newErrors.email = "Email is required";
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-            newErrors.email = "Email is invalid";
-        }
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
 
-        if (!formData.phone.trim()) {
-            newErrors.phone = "Phone number is required";
+        if (!result.canceled) {
+            setValue("avatar", result.assets[0].uri);
         }
-
-        if (!formData.location.trim()) {
-            newErrors.location = "Location is required";
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
     };
 
-    const handleSave = () => {
-        if (validateForm()) {
-            dispatch(updateProfile(formData));
-            router.back();
-        }
+    const onSubmit = (data: FormData) => {
+        dispatch(updateProfile(data));
+        router.back();
     };
 
     return (
@@ -65,83 +86,108 @@ export default function EditProfileScreen() {
             <Card style={styles.card}>
                 <Card.Content>
                     <View style={styles.avatarContainer}>
-                        <Avatar.Image
-                            size={100}
-                            source={{ uri: profile.avatar }}
+                        <Controller
+                            control={control}
+                            name="avatar"
+                            render={({ field: { value } }) => (
+                                <Avatar.Image
+                                    size={100}
+                                    source={{ uri: value }}
+                                />
+                            )}
                         />
-                        <Button
-                            mode="text"
-                            onPress={() => {
-                                /* TODO: Implement image upload */
-                            }}
-                        >
+                        <Button mode="text" onPress={handleChangePhoto}>
                             Change Photo
                         </Button>
                     </View>
 
-                    <TextInput
-                        label="Full Name"
-                        value={formData.name}
-                        onChangeText={(text) =>
-                            setFormData((prev) => ({ ...prev, name: text }))
-                        }
-                        mode="outlined"
-                        error={!!errors.name}
-                        style={styles.input}
+                    <Controller
+                        control={control}
+                        name="name"
+                        render={({ field: { onChange, value } }) => (
+                            <TextInput
+                                label="Full Name"
+                                value={value}
+                                onChangeText={onChange}
+                                mode="outlined"
+                                error={!!errors.name}
+                                style={styles.input}
+                            />
+                        )}
                     />
                     {errors.name && (
-                        <HelperText type="error">{errors.name}</HelperText>
+                        <HelperText type="error">
+                            {errors.name.message}
+                        </HelperText>
                     )}
 
-                    <TextInput
-                        label="Email"
-                        value={formData.email}
-                        onChangeText={(text) =>
-                            setFormData((prev) => ({ ...prev, email: text }))
-                        }
-                        mode="outlined"
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        error={!!errors.email}
-                        style={styles.input}
+                    <Controller
+                        control={control}
+                        name="email"
+                        render={({ field: { onChange, value } }) => (
+                            <TextInput
+                                label="Email"
+                                value={value}
+                                onChangeText={onChange}
+                                mode="outlined"
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                error={!!errors.email}
+                                style={styles.input}
+                            />
+                        )}
                     />
                     {errors.email && (
-                        <HelperText type="error">{errors.email}</HelperText>
+                        <HelperText type="error">
+                            {errors.email.message}
+                        </HelperText>
                     )}
 
-                    <TextInput
-                        label="Phone Number"
-                        value={formData.phone}
-                        onChangeText={(text) =>
-                            setFormData((prev) => ({ ...prev, phone: text }))
-                        }
-                        mode="outlined"
-                        keyboardType="phone-pad"
-                        error={!!errors.phone}
-                        style={styles.input}
+                    <Controller
+                        control={control}
+                        name="phone"
+                        render={({ field: { onChange, value } }) => (
+                            <TextInput
+                                label="Phone Number"
+                                value={value}
+                                onChangeText={onChange}
+                                mode="outlined"
+                                keyboardType="phone-pad"
+                                error={!!errors.phone}
+                                style={styles.input}
+                            />
+                        )}
                     />
                     {errors.phone && (
-                        <HelperText type="error">{errors.phone}</HelperText>
+                        <HelperText type="error">
+                            {errors.phone.message}
+                        </HelperText>
                     )}
 
-                    <TextInput
-                        label="Location"
-                        value={formData.location}
-                        onChangeText={(text) =>
-                            setFormData((prev) => ({ ...prev, location: text }))
-                        }
-                        mode="outlined"
-                        error={!!errors.location}
-                        style={styles.input}
+                    <Controller
+                        control={control}
+                        name="location"
+                        render={({ field: { onChange, value } }) => (
+                            <TextInput
+                                label="Location"
+                                value={value}
+                                onChangeText={onChange}
+                                mode="outlined"
+                                error={!!errors.location}
+                                style={styles.input}
+                            />
+                        )}
                     />
                     {errors.location && (
-                        <HelperText type="error">{errors.location}</HelperText>
+                        <HelperText type="error">
+                            {errors.location.message}
+                        </HelperText>
                     )}
 
                     <View style={styles.buttonContainer}>
                         <Button
                             mode="contained"
-                            onPress={handleSave}
+                            onPress={handleSubmit(onSubmit)}
                             style={styles.saveButton}
                         >
                             Save Changes
