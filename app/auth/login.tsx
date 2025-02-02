@@ -1,19 +1,20 @@
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import React, { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { Button, Text, TextInput } from "react-native-paper";
+import { login } from "../../src/features/auth/authSlice";
+import { useAppDispatch } from "../../src/store/hooks";
 
 export default function LoginScreen() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
+    const dispatch = useAppDispatch();
 
     const handleLogin = () => {
-        // TODO: Add actual authentication logic here
-
-        // For now, just navigate to home
-        router.replace("/(tabs)/home");
+        // For now, just dispatch login without validation
+        dispatch(login());
     };
 
     const handleForgotPassword = () => {
@@ -27,8 +28,9 @@ export default function LoginScreen() {
         >
             <View style={styles.header}>
                 <Text variant="headlineLarge" style={styles.title}>
-                    Login
+                    Welcome Back
                 </Text>
+                <Text variant="bodyLarge">Sign in to continue</Text>
             </View>
 
             <View style={styles.form}>
@@ -71,7 +73,7 @@ export default function LoginScreen() {
                     onPress={handleLogin}
                     style={styles.loginButton}
                 >
-                    Log In
+                    Login
                 </Button>
 
                 <Button

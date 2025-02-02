@@ -1,163 +1,289 @@
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { useState } from "react";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { yupResolver } from "@hookform/resolvers/yup";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import {
-    Image,
-    Platform,
-    ScrollView,
-    StyleSheet,
+    Button,
+    Card,
+    Chip,
+    HelperText,
+    SegmentedButtons,
+    Text,
     TextInput,
-    TouchableOpacity,
-    View,
-} from "react-native";
+} from "react-native-paper";
+import * as yup from "yup";
 
-const BLOOD_GROUPS = ["A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-"];
+const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
-export default function RequestBloodScreen() {
-    const router = useRouter();
-    const [selectedBloodGroup, setSelectedBloodGroup] = useState<string | null>(
-        null
-    );
+const schema = yup.object({
+    requestType: yup.string().required(),
+    bloodType: yup.string().required("Blood type is required"),
+    units: yup.string().required("Units are required"),
+    hospital: yup.string().required("Hospital name is required"),
+    location: yup.string().required("Location is required"),
+    dateTime: yup.date().required("Date and time are required"),
+    note: yup.string(),
+});
+
+type FormData = yup.InferType<typeof schema>;
+
+export default function RequestScreen() {
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [showTimePicker, setShowTimePicker] = useState(false);
+
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<FormData>({
+        resolver: yupResolver(schema),
+        defaultValues: {
+            requestType: "emergency",
+            dateTime: new Date(),
+        },
+    });
+
+    const onSubmit = (data: FormData) => {
+        console.log(data);
+        // TODO: Handle form submission
+    };
+
+    const formatDateTime = (date: Date) => {
+        return `${date.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        })} ${date.toLocaleTimeString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+        })}`;
+    };
 
     return (
-        <ThemedView style={styles.container}>
-            {/* Header */}
+        <ScrollView style={styles.container}>
             <View style={styles.header}>
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    style={styles.backButton}
-                >
-                    <Ionicons name="chevron-back" size={24} color="#000" />
-                    <ThemedText style={styles.headerTitle}>
-                        Request Blood
-                    </ThemedText>
-                </TouchableOpacity>
-                <View style={styles.headerRight}>
-                    <Image
-                        source={require("@/assets/images/profile.jpeg")}
-                        style={styles.profileImage}
-                    />
-                    <TouchableOpacity>
-                        <Ionicons
-                            name="notifications-outline"
-                            size={24}
-                            color="#000"
-                        />
-                    </TouchableOpacity>
-                </View>
+                <Text variant="headlineMedium" style={styles.title}>
+                    Request Blood
+                </Text>
+                <MaterialCommunityIcons name="bell" size={24} color="#000" />
             </View>
 
-            <ScrollView style={styles.content}>
-                {/* Blood Group Selection */}
-                <View style={styles.section}>
-                    <ThemedText style={styles.sectionTitle}>
-                        Choose the blood group
-                    </ThemedText>
-                    <View style={styles.bloodGroupGrid}>
-                        {BLOOD_GROUPS.map((group) => (
-                            <TouchableOpacity
-                                key={group}
-                                style={[
-                                    styles.bloodGroupItem,
-                                    selectedBloodGroup === group &&
-                                        styles.selectedBloodGroup,
+            <Card style={styles.card}>
+                <Card.Content>
+                    <Text variant="titleMedium" style={styles.sectionTitle}>
+                        Request Type
+                    </Text>
+                    <Controller
+                        control={control}
+                        name="requestType"
+                        render={({ field: { value, onChange } }) => (
+                            <SegmentedButtons
+                                value={value}
+                                onValueChange={onChange}
+                                buttons={[
+                                    {
+                                        value: "emergency",
+                                        label: "Emergency",
+                                        icon: "alarm-light",
+                                    },
+                                    {
+                                        value: "general",
+                                        label: "General",
+                                        icon: "calendar-clock",
+                                    },
                                 ]}
-                                onPress={() => setSelectedBloodGroup(group)}
-                            >
-                                <ThemedText
-                                    style={[
-                                        styles.bloodGroupText,
-                                        selectedBloodGroup === group &&
-                                            styles.selectedBloodGroupText,
-                                    ]}
-                                >
-                                    {group}
-                                </ThemedText>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
+                                style={styles.segmentedButton}
+                            />
+                        )}
+                    />
 
-                {/* Amount Selection */}
-                <View style={styles.section}>
-                    <ThemedText style={styles.sectionTitle}>
-                        Choose your Amount
-                    </ThemedText>
-                    <TouchableOpacity style={styles.input}>
-                        <ThemedText style={styles.inputText}>
-                            Quantity
-                        </ThemedText>
-                        <Ionicons
-                            name="chevron-down"
-                            size={20}
-                            color="#8B1818"
-                        />
-                    </TouchableOpacity>
-                </View>
+                    <Text
+                        variant="titleMedium"
+                        style={[styles.sectionTitle, styles.topSpacing]}
+                    >
+                        Blood Group
+                    </Text>
+                    <Controller
+                        control={control}
+                        name="bloodType"
+                        render={({ field: { value, onChange } }) => (
+                            <View style={styles.bloodGroupsContainer}>
+                                {bloodGroups.map((group) => (
+                                    <Chip
+                                        key={group}
+                                        selected={value === group}
+                                        onPress={() => onChange(group)}
+                                        style={styles.bloodGroupChip}
+                                        showSelectedOverlay
+                                    >
+                                        {group}
+                                    </Chip>
+                                ))}
+                            </View>
+                        )}
+                    />
+                    {errors.bloodType && (
+                        <HelperText type="error">
+                            {errors.bloodType.message}
+                        </HelperText>
+                    )}
 
-                {/* Location Selection */}
-                <View style={styles.section}>
-                    <ThemedText style={styles.sectionTitle}>
-                        Choose your location
-                    </ThemedText>
-                    <View style={styles.input}>
-                        <TextInput
-                            placeholder="Select Location"
-                            style={styles.inputText}
-                            placeholderTextColor="#666"
-                        />
-                        <Ionicons name="location" size={20} color="#8B1818" />
-                    </View>
-                </View>
+                    <Controller
+                        control={control}
+                        name="units"
+                        render={({ field: { value, onChange } }) => (
+                            <TextInput
+                                label="Units Required"
+                                value={value}
+                                onChangeText={onChange}
+                                mode="outlined"
+                                keyboardType="numeric"
+                                style={styles.input}
+                                error={!!errors.units}
+                            />
+                        )}
+                    />
+                    {errors.units && (
+                        <HelperText type="error">
+                            {errors.units.message}
+                        </HelperText>
+                    )}
 
-                {/* Contact Information */}
-                <View style={styles.section}>
-                    <ThemedText style={styles.sectionTitle}>
-                        Contact Information
-                    </ThemedText>
-                    <View style={styles.input}>
-                        <TextInput
-                            placeholder="Mobile/Telephone"
-                            style={styles.inputText}
-                            placeholderTextColor="#666"
-                            keyboardType="phone-pad"
-                        />
-                        <Ionicons name="pencil" size={20} color="#8B1818" />
-                    </View>
-                </View>
+                    <Controller
+                        control={control}
+                        name="hospital"
+                        render={({ field: { value, onChange } }) => (
+                            <TextInput
+                                label="Hospital Name"
+                                value={value}
+                                onChangeText={onChange}
+                                mode="outlined"
+                                style={styles.input}
+                                error={!!errors.hospital}
+                            />
+                        )}
+                    />
+                    {errors.hospital && (
+                        <HelperText type="error">
+                            {errors.hospital.message}
+                        </HelperText>
+                    )}
 
-                {/* Patient Information */}
-                <View style={styles.section}>
-                    <ThemedText style={styles.sectionTitle}>
-                        Patient Information
-                    </ThemedText>
-                    <View style={styles.input}>
-                        <TextInput
-                            placeholder="Disease/Cause"
-                            style={styles.inputText}
-                            placeholderTextColor="#666"
-                        />
-                        <Ionicons name="pencil" size={20} color="#8B1818" />
-                    </View>
-                </View>
+                    <Controller
+                        control={control}
+                        name="location"
+                        render={({ field: { value, onChange } }) => (
+                            <TextInput
+                                label="Location"
+                                value={value}
+                                onChangeText={onChange}
+                                mode="outlined"
+                                right={<TextInput.Icon icon="map-marker" />}
+                                style={styles.input}
+                                error={!!errors.location}
+                            />
+                        )}
+                    />
+                    {errors.location && (
+                        <HelperText type="error">
+                            {errors.location.message}
+                        </HelperText>
+                    )}
 
-                {/* Action Buttons */}
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.primaryButton}>
-                        <ThemedText style={styles.primaryButtonText}>
-                            Request Now
-                        </ThemedText>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.secondaryButton}>
-                        <ThemedText style={styles.secondaryButtonText}>
-                            Save for later
-                        </ThemedText>
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
-        </ThemedView>
+                    <Controller
+                        control={control}
+                        name="dateTime"
+                        render={({ field: { value, onChange } }) => (
+                            <>
+                                <TextInput
+                                    label="Required Date & Time"
+                                    value={formatDateTime(value)}
+                                    mode="outlined"
+                                    right={
+                                        <TextInput.Icon
+                                            icon="calendar-clock"
+                                            onPress={() =>
+                                                setShowDatePicker(true)
+                                            }
+                                        />
+                                    }
+                                    style={styles.input}
+                                    editable={false}
+                                    error={!!errors.dateTime}
+                                />
+                                {showDatePicker && (
+                                    <DateTimePicker
+                                        value={value}
+                                        mode="date"
+                                        display={
+                                            Platform.OS === "ios"
+                                                ? "spinner"
+                                                : "default"
+                                        }
+                                        onChange={(_, selectedDate) => {
+                                            setShowDatePicker(false);
+                                            if (selectedDate) {
+                                                onChange(selectedDate);
+                                                setShowTimePicker(true);
+                                            }
+                                        }}
+                                        minimumDate={new Date()}
+                                    />
+                                )}
+                                {showTimePicker && (
+                                    <DateTimePicker
+                                        value={value}
+                                        mode="time"
+                                        display={
+                                            Platform.OS === "ios"
+                                                ? "spinner"
+                                                : "default"
+                                        }
+                                        onChange={(_, selectedDate) => {
+                                            setShowTimePicker(false);
+                                            if (selectedDate) {
+                                                onChange(selectedDate);
+                                            }
+                                        }}
+                                    />
+                                )}
+                            </>
+                        )}
+                    />
+                    {errors.dateTime && (
+                        <HelperText type="error">
+                            {errors.dateTime.message}
+                        </HelperText>
+                    )}
+
+                    <Controller
+                        control={control}
+                        name="note"
+                        render={({ field: { value, onChange } }) => (
+                            <TextInput
+                                label="Additional Note"
+                                value={value}
+                                onChangeText={onChange}
+                                mode="outlined"
+                                multiline
+                                numberOfLines={3}
+                                style={styles.input}
+                            />
+                        )}
+                    />
+
+                    <Button
+                        mode="contained"
+                        onPress={handleSubmit(onSubmit)}
+                        style={styles.submitButton}
+                    >
+                        Submit Request
+                    </Button>
+                </Card.Content>
+            </Card>
+        </ScrollView>
     );
 }
 
@@ -170,109 +296,41 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: 16,
-        paddingTop: Platform.OS === "ios" ? 60 : 20,
-        borderBottomWidth: 1,
-        borderBottomColor: "#eee",
+        padding: 20,
+        paddingTop: 60,
     },
-    backButton: {
-        flexDirection: "row",
-        alignItems: "center",
+    title: {
+        fontWeight: "bold",
     },
-    headerTitle: {
-        fontSize: 18,
-        fontWeight: "600",
-        marginLeft: 8,
-    },
-    headerRight: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 12,
-    },
-    profileImage: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-    },
-    content: {
-        flex: 1,
-        padding: 16,
-    },
-    section: {
-        marginBottom: 24,
+    card: {
+        margin: 20,
+        marginTop: 0,
     },
     sectionTitle: {
-        fontSize: 16,
-        color: "#333",
         marginBottom: 12,
+        fontWeight: "500",
     },
-    bloodGroupGrid: {
+    segmentedButton: {
+        marginBottom: 8,
+    },
+    topSpacing: {
+        marginTop: 20,
+    },
+    bloodGroupsContainer: {
         flexDirection: "row",
         flexWrap: "wrap",
-        gap: 12,
-        justifyContent: "space-between",
+        gap: 8,
+        marginBottom: 16,
     },
-    bloodGroupItem: {
-        width: "22%",
-        aspectRatio: 1,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: "#E11D48",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    selectedBloodGroup: {
-        backgroundColor: "#8B1818",
-    },
-    bloodGroupText: {
-        fontSize: 16,
-        color: "#E11D48",
-        fontWeight: "600",
-    },
-    selectedBloodGroupText: {
-        color: "#fff",
+    bloodGroupChip: {
+        marginRight: 8,
+        marginBottom: 8,
     },
     input: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        borderWidth: 1,
-        borderColor: "#ddd",
-        borderRadius: 8,
-        padding: 12,
+        marginBottom: 16,
     },
-    inputText: {
-        fontSize: 16,
-        color: "#666",
-        flex: 1,
-    },
-    buttonContainer: {
-        gap: 12,
-        marginTop: 12,
-        marginBottom: 30,
-    },
-    primaryButton: {
-        backgroundColor: "#8B1818",
-        padding: 16,
-        borderRadius: 8,
-        alignItems: "center",
-    },
-    primaryButtonText: {
-        color: "#fff",
-        fontSize: 16,
-        fontWeight: "600",
-    },
-    secondaryButton: {
-        backgroundColor: "#fff",
-        padding: 16,
-        borderRadius: 8,
-        alignItems: "center",
-        borderWidth: 1,
-        borderColor: "#8B1818",
-    },
-    secondaryButtonText: {
-        color: "#8B1818",
-        fontSize: 16,
-        fontWeight: "600",
+    submitButton: {
+        marginTop: 8,
+        paddingVertical: 6,
     },
 });

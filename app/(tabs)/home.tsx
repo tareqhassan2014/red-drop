@@ -1,6 +1,6 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Avatar, Button, Card, Text } from "react-native-paper";
+import { Button, Card, Text } from "react-native-paper";
+import HeaderWithNotification from "../../components/HeaderWithNotification";
 
 const menuItems = [
     { icon: "water", label: "Donate Blood" },
@@ -14,48 +14,7 @@ const menuItems = [
 export default function HomeScreen() {
     return (
         <ScrollView style={styles.container}>
-            {/* Header Section */}
-            <View style={styles.header}>
-                <View style={styles.userSection}>
-                    <View style={styles.userInfo}>
-                        <Avatar.Image
-                            size={50}
-                            source={{ uri: "https://placeholder.com/150" }}
-                        />
-                        <View style={styles.userDetails}>
-                            <Text variant="titleMedium">Hasibur Rahman</Text>
-                            <View style={styles.locationRow}>
-                                <MaterialCommunityIcons
-                                    name="map-marker"
-                                    size={16}
-                                    color="#666"
-                                />
-                                <Text variant="bodySmall">Mirpur 10, Dhaka</Text>
-                            </View>
-                        </View>
-                    </View>
-                    <MaterialCommunityIcons name="bell" size={24} color="#000" />
-                </View>
-
-                <View style={styles.achievementSection}>
-                    <View style={styles.achievementBadge}>
-                        <MaterialCommunityIcons
-                            name="heart"
-                            size={20}
-                            color="#E53935"
-                        />
-                        <Text variant="bodySmall">Lifesaver - 15 People</Text>
-                    </View>
-                    <View style={styles.bloodInfo}>
-                        <Text variant="bodySmall">
-                            Next donation: 19.12.2024 - 54 Days Left
-                        </Text>
-                        <View style={styles.bloodType}>
-                            <Text style={styles.bloodTypeText}>A+</Text>
-                        </View>
-                    </View>
-                </View>
-            </View>
+            <HeaderWithNotification title="Home" />
 
             {/* Campaign Carousel */}
             <View style={styles.campaignSection}>

@@ -1,103 +1,249 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { Avatar, Button, Card, Text } from "react-native-paper";
+import { useRouter } from "expo-router";
+import React from "react";
+import { Alert, ScrollView, StyleSheet, View } from "react-native";
+import {
+    Avatar,
+    Button,
+    Card,
+    Divider,
+    List,
+    Text,
+    TouchableRipple,
+} from "react-native-paper";
+import HeaderWithNotification from "../../components/HeaderWithNotification";
+import { logout } from "../../src/features/auth/authSlice";
+import { selectDonations, selectProfile } from "../../src/features/data/dataSlice";
+import { useAppDispatch, useAppSelector } from "../../src/store/hooks";
+
+// Sample user data
+const userData = {
+    name: "Hasibur Rahman",
+    bloodType: "A+",
+    location: "Mirpur 10, Dhaka",
+    email: "hasib@example.com",
+    phone: "+880 1234-567890",
+    lastDonation: "2024-01-15",
+    totalDonations: 15,
+    nextDonationDate: "2024-04-15",
+    avatar: "https://i.pravatar.cc/150?img=3",
+};
+
+const donationHistory = [
+    {
+        id: 1,
+        date: "2024-01-15",
+        hospital: "Square Hospital",
+        location: "Panthapath, Dhaka",
+        recipient: "John Doe",
+    },
+    {
+        id: 2,
+        date: "2023-10-10",
+        hospital: "United Hospital",
+        location: "Gulshan, Dhaka",
+        recipient: "Jane Smith",
+    },
+    {
+        id: 3,
+        date: "2023-07-05",
+        hospital: "Apollo Hospital",
+        location: "Bashundhara, Dhaka",
+        recipient: "Mike Johnson",
+    },
+];
 
 export default function ProfileScreen() {
+    const dispatch = useAppDispatch();
+    const router = useRouter();
+    const profile = useAppSelector(selectProfile);
+    const donations = useAppSelector(selectDonations);
+
+    const handleLogout = () => {
+        Alert.alert(
+            "Logout",
+            "Are you sure you want to logout?",
+            [
+                {
+                    text: "Cancel",
+                    style: "cancel",
+                },
+                {
+                    text: "Logout",
+                    onPress: () => {
+                        dispatch(logout());
+                    },
+                    style: "destructive",
+                },
+            ],
+            { cancelable: true }
+        );
+    };
+
     return (
         <ScrollView style={styles.container}>
+            <HeaderWithNotification title="Profile" />
+
             {/* Profile Header */}
             <View style={styles.header}>
-                <View style={styles.profileInfo}>
-                    <Avatar.Image
-                        size={80}
-                        source={{ uri: "https://placeholder.com/150" }}
+                <Avatar.Image size={100} source={{ uri: profile.avatar }} />
+                <Text variant="headlineSmall" style={styles.name}>
+                    {profile.name}
+                </Text>
+                <View style={styles.bloodTypeContainer}>
+                    <MaterialCommunityIcons
+                        name="water"
+                        size={20}
+                        color="#E53935"
                     />
-                    <View style={styles.userInfo}>
-                        <Text variant="titleLarge">Hasibur Rahman</Text>
-                        <View style={styles.locationRow}>
-                            <MaterialCommunityIcons
-                                name="map-marker"
-                                size={16}
-                                color="#666"
-                            />
-                            <Text variant="bodyMedium">Mirpur 10, Dhaka</Text>
-                        </View>
-                    </View>
-                    <View style={styles.bloodBadge}>
-                        <Text style={styles.bloodType}>A+</Text>
-                    </View>
+                    <Text variant="titleMedium" style={styles.bloodType}>
+                        {profile.bloodType}
+                    </Text>
                 </View>
             </View>
 
-            {/* Menu Options */}
-            <View style={styles.menuSection}>
-                <Text variant="titleMedium" style={styles.sectionTitle}>
-                    Inventories
-                </Text>
-
-                <Card style={styles.menuCard}>
-                    <Card.Content>
-                        <Button
-                            mode="text"
-                            icon="account"
-                            contentStyle={styles.menuButton}
-                            onPress={() => {}}
+            {/* Stats Card */}
+            <Card style={styles.statsCard}>
+                <Card.Content style={styles.statsContent}>
+                    <View style={styles.statItem}>
+                        <Text variant="headlineMedium" style={styles.statNumber}>
+                            {profile.totalDonations}
+                        </Text>
+                        <Text variant="bodySmall">Total Donations</Text>
+                    </View>
+                    <Divider style={styles.verticalDivider} />
+                    <View style={styles.statItem}>
+                        <Text
+                            variant="headlineMedium"
+                            style={[styles.statNumber, styles.nextDonation]}
                         >
-                            Account Information
-                        </Button>
-                        <Button
-                            mode="text"
-                            icon="headphones"
-                            contentStyle={styles.menuButton}
-                            onPress={() => {}}
-                        >
-                            Support
-                        </Button>
-                    </Card.Content>
-                </Card>
+                            54
+                        </Text>
+                        <Text variant="bodySmall">Days Until Next</Text>
+                    </View>
+                </Card.Content>
+            </Card>
 
-                <Text
-                    variant="titleMedium"
-                    style={[styles.sectionTitle, styles.topSpacing]}
-                >
-                    Historical
-                </Text>
+            {/* Personal Information */}
+            <Card style={styles.card}>
+                <Card.Content>
+                    <Text variant="titleMedium" style={styles.sectionTitle}>
+                        Personal Information
+                    </Text>
+                    <List.Item
+                        title="Location"
+                        description={profile.location}
+                        left={(props) => (
+                            <List.Icon {...props} icon="map-marker" />
+                        )}
+                    />
+                    <List.Item
+                        title="Email"
+                        description={profile.email}
+                        left={(props) => <List.Icon {...props} icon="email" />}
+                    />
+                    <List.Item
+                        title="Phone"
+                        description={profile.phone}
+                        left={(props) => <List.Icon {...props} icon="phone" />}
+                    />
+                </Card.Content>
+            </Card>
 
-                <Card style={styles.menuCard}>
-                    <Card.Content>
-                        <Button
-                            mode="text"
-                            icon="bookmark"
-                            contentStyle={styles.menuButton}
-                            onPress={() => {}}
-                        >
-                            Bookmarks
-                        </Button>
-                        <Button
-                            mode="text"
-                            icon="clock"
-                            contentStyle={styles.menuButton}
-                            onPress={() => {}}
-                        >
-                            Recent Activities
-                        </Button>
-                    </Card.Content>
-                </Card>
+            {/* Donation History */}
+            <Card style={styles.card}>
+                <Card.Content>
+                    <Text variant="titleMedium" style={styles.sectionTitle}>
+                        Recent Donations
+                    </Text>
+                    {donations.map((donation, index) => (
+                        <React.Fragment key={donation.id}>
+                            <TouchableRipple
+                                onPress={() => {
+                                    /* TODO: Show donation details */
+                                }}
+                            >
+                                <List.Item
+                                    title={donation.hospital}
+                                    description={`${donation.date} • ${donation.location}`}
+                                    left={(props) => (
+                                        <List.Icon
+                                            {...props}
+                                            icon="hospital-building"
+                                        />
+                                    )}
+                                />
+                            </TouchableRipple>
+                            {index < donations.length - 1 && (
+                                <Divider />
+                            )}
+                        </React.Fragment>
+                    ))}
+                    <Button
+                        mode="text"
+                        onPress={() => {
+                            /* TODO: View all donations */
+                        }}
+                        style={styles.viewAllButton}
+                    >
+                        View All Donations
+                    </Button>
+                </Card.Content>
+            </Card>
 
-                {/* Logout Button */}
-                <Button
-                    mode="text"
-                    icon="logout"
-                    contentStyle={styles.menuButton}
-                    textColor="#E53935"
-                    onPress={() => {
-                        /* TODO: Implement logout */
-                    }}
-                    style={styles.logoutButton}
-                >
-                    Logout
-                </Button>
-            </View>
+            {/* Settings */}
+            <Card style={styles.card}>
+                <Card.Content>
+                    <Text variant="titleMedium" style={styles.sectionTitle}>
+                        Settings
+                    </Text>
+                    <List.Item
+                        title="Edit Profile"
+                        left={(props) => (
+                            <List.Icon {...props} icon="account-edit" />
+                        )}
+                        right={(props) => (
+                            <List.Icon {...props} icon="chevron-right" />
+                        )}
+                        onPress={() => {
+                            /* TODO: Navigate to edit profile */
+                        }}
+                    />
+                    <Divider />
+                    <List.Item
+                        title="Notifications"
+                        left={(props) => (
+                            <List.Icon {...props} icon="bell-outline" />
+                        )}
+                        right={(props) => (
+                            <List.Icon {...props} icon="chevron-right" />
+                        )}
+                        onPress={() => {
+                            router.push("/notifications");
+                        }}
+                    />
+                    <Divider />
+                    <List.Item
+                        title="Privacy Settings"
+                        left={(props) => (
+                            <List.Icon {...props} icon="shield-account" />
+                        )}
+                        right={(props) => (
+                            <List.Icon {...props} icon="chevron-right" />
+                        )}
+                        onPress={() => {
+                            router.push("/settings/privacy");
+                        }}
+                    />
+                    <Divider />
+                    <List.Item
+                        title="Logout"
+                        left={(props) => <List.Icon {...props} icon="logout" />}
+                        onPress={handleLogout}
+                        titleStyle={styles.logoutText}
+                    />
+                </Card.Content>
+            </Card>
         </ScrollView>
     );
 }
@@ -108,51 +254,64 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
     },
     header: {
-        backgroundColor: "#E53935",
+        alignItems: "center",
         padding: 20,
-        paddingTop: 60,
-        paddingBottom: 40,
     },
-    profileInfo: {
-        alignItems: "center",
-    },
-    userInfo: {
-        alignItems: "center",
+    name: {
+        fontWeight: "bold",
         marginTop: 12,
     },
-    locationRow: {
+    bloodTypeContainer: {
         flexDirection: "row",
         alignItems: "center",
-        marginTop: 4,
-    },
-    bloodBadge: {
-        backgroundColor: "#fff",
-        paddingHorizontal: 12,
-        paddingVertical: 4,
-        borderRadius: 16,
         marginTop: 8,
     },
     bloodType: {
+        marginLeft: 4,
         color: "#E53935",
-        fontWeight: "bold",
+        fontWeight: "500",
     },
-    menuSection: {
-        padding: 20,
+    statsCard: {
+        margin: 20,
+        marginTop: 0,
+    },
+    statsContent: {
+        flexDirection: "row",
+        justifyContent: "space-around",
+        alignItems: "center",
+        padding: 16,
+    },
+    statItem: {
+        alignItems: "center",
+    },
+    statNumber: {
+        fontWeight: "bold",
+        color: "#4CAF50",
+    },
+    nextDonation: {
+        color: "#E53935",
+    },
+    verticalDivider: {
+        height: "100%",
+        width: 1,
+    },
+    card: {
+        margin: 20,
+        marginTop: 0,
     },
     sectionTitle: {
         fontWeight: "bold",
         marginBottom: 12,
     },
-    menuCard: {
-        marginBottom: 16,
-    },
-    menuButton: {
-        justifyContent: "flex-start",
-    },
-    topSpacing: {
+    viewAllButton: {
         marginTop: 8,
     },
-    logoutButton: {
-        marginTop: 8,
+    logoutText: {
+        color: "#E53935",
+    },
+    loader: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
     },
 });
